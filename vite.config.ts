@@ -25,6 +25,7 @@ export default defineConfig({
           charts: ["recharts"],
           db: ["dexie", "dexie-react-hooks"],
           forms: ["react-hook-form", "zod", "@hookform/resolvers"],
+          calendar: ["react-day-picker"],
         },
       },
     },

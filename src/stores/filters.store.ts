@@ -1,13 +1,12 @@
 import { create } from "zustand";
 import type { AppointmentStatus } from "@/domain/enums";
-
-/** Periodo simulado para el dashboard (SSD 4.2). */
-export type DashboardPeriod = "this_month" | "last_month" | "last_3_months";
+import { defaultRange, serializeRange, type DateRange } from "@/features/dashboard/date-ranges";
 
 interface FiltersState {
-  // Dashboard
-  period: DashboardPeriod;
-  setPeriod: (period: DashboardPeriod) => void;
+  // Dashboard / Reportes: rango de fechas (ISO) seleccionado con calendario.
+  dateFrom: string;
+  dateTo: string;
+  setDateRange: (range: DateRange) => void;
 
   // Agenda
   appointmentStatus: AppointmentStatus | "all";
@@ -20,9 +19,15 @@ interface FiltersState {
   setPatientSearch: (q: string) => void;
 }
 
+const initialRange = serializeRange(defaultRange());
+
 export const useFiltersStore = create<FiltersState>((set) => ({
-  period: "this_month",
-  setPeriod: (period) => set({ period }),
+  dateFrom: initialRange.from,
+  dateTo: initialRange.to,
+  setDateRange: (range) => {
+    const iso = serializeRange(range);
+    set({ dateFrom: iso.from, dateTo: iso.to });
+  },
 
   appointmentStatus: "all",
   setAppointmentStatus: (appointmentStatus) => set({ appointmentStatus }),

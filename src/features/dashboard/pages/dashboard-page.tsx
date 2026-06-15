@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { KpiCard } from "@/features/dashboard/components/kpi-card";
-import { PeriodSelector } from "@/features/dashboard/components/period-selector";
+import { DateRangePicker } from "@/features/dashboard/components/date-range-picker";
 import {
   RevenueByServiceChart,
   RevenueTrendChart,
@@ -47,8 +47,14 @@ export function DashboardPage() {
   const specialists = useSpecialists();
   const specialties = useSpecialties();
   const services = useServices();
-  const period = useFiltersStore((s) => s.period);
+  const dateFrom = useFiltersStore((s) => s.dateFrom);
+  const dateTo = useFiltersStore((s) => s.dateTo);
   const branchScope = useScopedBranch();
+
+  const range = useMemo(
+    () => [new Date(dateFrom), new Date(dateTo)] as [Date, Date],
+    [dateFrom, dateTo],
+  );
 
   const loaded =
     patients && appointments && payments && packages && specialists && specialties && services;
@@ -67,12 +73,12 @@ export function DashboardPage() {
     return scopeByBranch(source, branchScope);
   }, [loaded, patients, appointments, payments, packages, specialists, specialties, services, branchScope]);
 
-  const kpis = useMemo(() => (scoped ? computeKpis(scoped, period) : null), [scoped, period]);
+  const kpis = useMemo(() => (scoped ? computeKpis(scoped, range) : null), [scoped, range]);
   const trend = useMemo(() => (scoped ? revenueByMonth(scoped) : []), [scoped]);
-  const byService = useMemo(() => (scoped ? revenueByService(scoped, period) : []), [scoped, period]);
+  const byService = useMemo(() => (scoped ? revenueByService(scoped, range) : []), [scoped, range]);
   const performance = useMemo(
-    () => (scoped ? specialistPerformance(scoped, period) : []),
-    [scoped, period],
+    () => (scoped ? specialistPerformance(scoped, range) : []),
+    [scoped, range],
   );
 
   return (
@@ -80,7 +86,7 @@ export function DashboardPage() {
       <PageHeader
         title="Dashboard"
         description="Indicadores de operación e ingresos"
-        actions={<PeriodSelector />}
+        actions={<DateRangePicker />}
       />
 
       {!kpis ? (

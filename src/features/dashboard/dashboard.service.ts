@@ -15,7 +15,6 @@ import type {
   RevenueByService,
   SpecialistPerformance,
 } from "@/features/dashboard/dashboard.types";
-import type { DashboardPeriod } from "@/stores/filters.store";
 
 /** Conjunto de datos crudos que el dashboard necesita para calcular KPIs. */
 export interface DashboardSource {
@@ -28,25 +27,13 @@ export interface DashboardSource {
   services: Service[];
 }
 
-/** Rango de fechas [desde, hasta) según el periodo simulado (SSD 4.2). */
-export function periodRange(period: DashboardPeriod, now = new Date()): [Date, Date] {
-  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  switch (period) {
-    case "this_month":
-      return [new Date(now.getFullYear(), now.getMonth(), 1), end];
-    case "last_month":
-      return [
-        new Date(now.getFullYear(), now.getMonth() - 1, 1),
-        new Date(now.getFullYear(), now.getMonth(), 1),
-      ];
-    case "last_3_months":
-      return [new Date(now.getFullYear(), now.getMonth() - 2, 1), end];
-  }
-}
+/** Rango de fechas inclusivo [desde, hasta] elegido en el calendario. */
+export type DateTuple = [Date, Date];
 
-function inRange(iso: string, [from, to]: [Date, Date]): boolean {
+/** Pertenencia inclusiva al rango (el calendario entrega 'hasta' = fin del día). */
+function inRange(iso: string, [from, to]: DateTuple): boolean {
   const t = new Date(iso).getTime();
-  return t >= from.getTime() && t < to.getTime();
+  return t >= from.getTime() && t <= to.getTime();
 }
 
 /** Filtra el conjunto por sede ("all" = sin filtro). */
@@ -62,13 +49,7 @@ export function scopeByBranch(source: DashboardSource, branchScope: string): Das
   };
 }
 
-export function computeKpis(
-  source: DashboardSource,
-  period: DashboardPeriod,
-  now = new Date(),
-): DashboardKpis {
-  const range = periodRange(period, now);
-
+export function computeKpis(source: DashboardSource, range: DateTuple): DashboardKpis {
   const paymentsInRange = source.payments.filter((p) => inRange(p.paidAt, range));
   const apptsInRange = source.appointments.filter((a) => inRange(a.startsAt, range));
   const patientsInRange = source.patients.filter((p) => inRange(p.createdAt, range));
@@ -100,10 +81,8 @@ export function computeKpis(
 
 export function revenueByService(
   source: DashboardSource,
-  period: DashboardPeriod,
-  now = new Date(),
+  range: DateTuple,
 ): RevenueByService[] {
-  const range = periodRange(period, now);
   const packageById = new Map(source.packages.map((p) => [p.id, p]));
   const serviceById = new Map(source.services.map((s) => [s.id, s]));
   const totals = new Map<string, number>();
@@ -146,10 +125,8 @@ export function revenueByMonth(
 
 export function specialistPerformance(
   source: DashboardSource,
-  period: DashboardPeriod,
-  now = new Date(),
+  range: DateTuple,
 ): SpecialistPerformance[] {
-  const range = periodRange(period, now);
   const specialtyById = new Map(source.specialties.map((s) => [s.id, s]));
 
   return source.specialists

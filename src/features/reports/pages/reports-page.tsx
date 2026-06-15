@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { RevenueTrendChart } from "@/features/dashboard/components/charts";
-import { PeriodSelector } from "@/features/dashboard/components/period-selector";
+import { DateRangePicker } from "@/features/dashboard/components/date-range-picker";
 import {
   computeKpis,
   revenueByMonth,
@@ -46,7 +46,13 @@ export function ReportsPage() {
   const specialties = useSpecialties();
   const services = useServices();
   const branches = useBranches();
-  const period = useFiltersStore((s) => s.period);
+  const dateFrom = useFiltersStore((s) => s.dateFrom);
+  const dateTo = useFiltersStore((s) => s.dateTo);
+
+  const range = useMemo(
+    () => [new Date(dateFrom), new Date(dateTo)] as [Date, Date],
+    [dateFrom, dateTo],
+  );
 
   const loaded =
     patients && appointments && payments && packages && specialists && specialties && services && branches;
@@ -60,7 +66,7 @@ export function ReportsPage() {
     if (!source || !branches) return [];
     return branches.map((branch) => {
       const scoped = scopeByBranch(source, branch.id);
-      const kpis = computeKpis(scoped, period);
+      const kpis = computeKpis(scoped, range);
       return {
         branch,
         revenue: kpis.monthlyRevenue,
@@ -69,7 +75,7 @@ export function ReportsPage() {
         absenteeism: kpis.absenteeismRate,
       };
     });
-  }, [source, branches, period]);
+  }, [source, branches, range]);
 
   const consolidatedTrend = useMemo(() => (source ? revenueByMonth(source) : []), [source]);
 
@@ -81,7 +87,7 @@ export function ReportsPage() {
       <PageHeader
         title="Reportes"
         description="Comparativo financiero y de ausentismo por sede"
-        actions={<PeriodSelector />}
+        actions={<DateRangePicker />}
       />
 
       {!source ? (
