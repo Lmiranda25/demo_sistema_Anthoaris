@@ -61,5 +61,6 @@ export const db = new AnthoarisDemoDB();
  * Versión de los datos semilla. Subir cuando cambie la forma o la distribución
  * del seed: los visitantes que tengan una versión anterior se regeneran solos
  * al abrir la app (ver initDatabase). v2: fechas repartidas hasta el mes actual.
+ * v3: sedes San Martín de Porres (SMP) y Comas, colores de marca.
  */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;

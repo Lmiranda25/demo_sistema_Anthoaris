@@ -58,17 +58,17 @@ function monthsAgoIso(months: number, day = 10): string {
 const branches: Branch[] = [
   {
     id: "branch_1",
-    name: "Sede Miraflores",
-    address: "Av. Pardo 215, Miraflores",
+    name: "Sede San Martín de Porres (SMP)",
+    address: "San Martín de Porres, Lima",
     phone: "01 555 1010",
-    color: "#0f766e",
+    color: "#1D9E75", // teal de marca
   },
   {
     id: "branch_2",
-    name: "Sede La Molina",
-    address: "Av. La Fontana 980, La Molina",
+    name: "Sede Comas",
+    address: "Comas, Lima",
     phone: "01 555 2020",
-    color: "#7c3aed",
+    color: "#D85A30", // coral de marca
   },
 ];
 

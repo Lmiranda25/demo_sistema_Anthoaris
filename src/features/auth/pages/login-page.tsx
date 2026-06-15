@@ -43,9 +43,9 @@ export function LoginPage() {
         >
           <div className="mb-8 text-center">
             <img
-              src={`${import.meta.env.BASE_URL}logo-anthoaris.svg`}
-              alt="Anthoaris"
-              className="mx-auto mb-4 h-10"
+              src={`${import.meta.env.BASE_URL}logo-anthoaris.png`}
+              alt="Centro Anthoaris"
+              className="mx-auto mb-4 h-24 w-auto rounded-xl object-contain shadow-sm"
             />
             <h1 className="text-2xl font-semibold tracking-tight">
               Sistema de Gestión Multi-Sede
