@@ -130,7 +130,7 @@ export function PatientDetailPage() {
       />
 
       <Tabs defaultValue="summary">
-        <TabsList>
+        <TabsList className="w-full overflow-x-auto sm:w-auto">
           <TabsTrigger value="summary">Resumen</TabsTrigger>
           <TabsTrigger value="appointments">Citas</TabsTrigger>
           <TabsTrigger value="packages">Paquetes</TabsTrigger>

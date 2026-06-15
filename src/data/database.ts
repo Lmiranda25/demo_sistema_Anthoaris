@@ -57,5 +57,9 @@ export class AnthoarisDemoDB extends Dexie {
 
 export const db = new AnthoarisDemoDB();
 
-/** Versión del esquema de datos semilla. Subir si cambia la forma del seed. */
-export const SCHEMA_VERSION = 1;
+/**
+ * Versión de los datos semilla. Subir cuando cambie la forma o la distribución
+ * del seed: los visitantes que tengan una versión anterior se regeneran solos
+ * al abrir la app (ver initDatabase). v2: fechas repartidas hasta el mes actual.
+ */
+export const SCHEMA_VERSION = 2;

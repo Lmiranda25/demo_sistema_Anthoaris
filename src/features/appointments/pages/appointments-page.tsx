@@ -111,7 +111,9 @@ export function AppointmentsPage() {
           <Button variant="outline" size="icon" onClick={() => shift(-1)} aria-label="Anterior">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <div className="min-w-[200px] text-center text-sm font-medium capitalize">{rangeLabel}</div>
+          <div className="min-w-0 flex-1 text-center text-sm font-medium capitalize sm:min-w-[200px] sm:flex-none">
+            {rangeLabel}
+          </div>
           <Button variant="outline" size="icon" onClick={() => shift(1)} aria-label="Siguiente">
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -120,7 +122,7 @@ export function AppointmentsPage() {
           </Button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Tabs value={view} onValueChange={(v) => setView(v as ViewMode)}>
             <TabsList>
               <TabsTrigger value="day">Día</TabsTrigger>
@@ -129,7 +131,7 @@ export function AppointmentsPage() {
           </Tabs>
 
           <Select value={specialistFilter} onValueChange={setSpecialistFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Especialista" />
             </SelectTrigger>
             <SelectContent>
@@ -146,7 +148,7 @@ export function AppointmentsPage() {
             value={statusFilter}
             onValueChange={(v) => setStatusFilter(v as AppointmentStatus | "all")}
           >
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-full sm:w-[160px]">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>

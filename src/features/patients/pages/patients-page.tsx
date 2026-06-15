@@ -91,45 +91,79 @@ export function PatientsPage() {
           }
         />
       ) : (
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Paciente</TableHead>
-                <TableHead>Edad</TableHead>
-                <TableHead>Sede</TableHead>
-                <TableHead>Especialista</TableHead>
-                <TableHead>Estado</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((p) => (
-                <TableRow
-                  key={p.id}
-                  className="cursor-pointer"
-                  onClick={() => navigate(`/app/patients/${p.id}`)}
-                >
-                  <TableCell className="font-medium">
-                    {p.firstName} {p.lastName}
-                    <div className="text-xs font-normal text-muted-foreground">
+        <>
+          {/* Escritorio/tablet: tabla */}
+          <Card className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Paciente</TableHead>
+                  <TableHead>Edad</TableHead>
+                  <TableHead>Sede</TableHead>
+                  <TableHead>Especialista</TableHead>
+                  <TableHead>Estado</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((p) => (
+                  <TableRow
+                    key={p.id}
+                    className="cursor-pointer"
+                    onClick={() => navigate(`/app/patients/${p.id}`)}
+                  >
+                    <TableCell className="font-medium">
+                      {p.firstName} {p.lastName}
+                      <div className="text-xs font-normal text-muted-foreground">
+                        {p.initialReason}
+                      </div>
+                    </TableCell>
+                    <TableCell>{calculateAge(p.birthDate)} años</TableCell>
+                    <TableCell className="text-muted-foreground">{branchName(p.branchId)}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {specialistName(p.assignedSpecialistId)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge tone={p.status === "active" ? "success" : "neutral"}>
+                        {p.status === "active" ? "Activo" : "Archivado"}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+
+          {/* Móvil: tarjetas (SSD 7.4 - tarjetas en lugar de tablas anchas) */}
+          <div className="space-y-3 md:hidden">
+            {rows.map((p) => (
+              <Card
+                key={p.id}
+                className="cursor-pointer active:bg-muted/40"
+                onClick={() => navigate(`/app/patients/${p.id}`)}
+              >
+                <div className="flex items-start justify-between gap-3 p-4">
+                  <div className="min-w-0">
+                    <div className="font-medium">
+                      {p.firstName} {p.lastName}
+                    </div>
+                    <div className="mt-0.5 truncate text-sm text-muted-foreground">
                       {p.initialReason}
                     </div>
-                  </TableCell>
-                  <TableCell>{calculateAge(p.birthDate)} años</TableCell>
-                  <TableCell className="text-muted-foreground">{branchName(p.branchId)}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {specialistName(p.assignedSpecialistId)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge tone={p.status === "active" ? "success" : "neutral"}>
-                      {p.status === "active" ? "Activo" : "Archivado"}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      {calculateAge(p.birthDate)} años · {branchName(p.branchId)}
+                    </div>
+                    <div className="mt-0.5 text-xs text-muted-foreground">
+                      {specialistName(p.assignedSpecialistId)}
+                    </div>
+                  </div>
+                  <Badge tone={p.status === "active" ? "success" : "neutral"}>
+                    {p.status === "active" ? "Activo" : "Archivado"}
+                  </Badge>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </>
       )}
 
       <PatientFormDialog

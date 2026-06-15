@@ -38,9 +38,19 @@ function birthDate(yearsAgo: number, month: number, day: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+/**
+ * Fecha a N meses atrás. Con months = 0 cae en el mes ACTUAL; en ese caso el
+ * día se limita a hoy o antes, para que represente "este mes hasta la fecha" y
+ * los KPIs de "Este mes" muestren datos reales (no fechas futuras).
+ */
 function monthsAgoIso(months: number, day = 10): string {
   const now = new Date();
-  const d = new Date(now.getFullYear(), now.getMonth() - months, day, 11, 0, 0, 0);
+  let targetDay = day;
+  if (months === 0) {
+    // No generar fechas futuras dentro del mes en curso.
+    targetDay = Math.min(day, now.getDate());
+  }
+  const d = new Date(now.getFullYear(), now.getMonth() - months, targetDay, 11, 0, 0, 0);
   return d.toISOString();
 }
 
@@ -217,7 +227,9 @@ const patients: Patient[] = patientSeed.map((p, i) => ({
   birthDate: birthDate(p.years, p.month, p.day),
   initialReason: p.reason,
   status: i === 11 ? "inactive" : "active", // un paciente archivado de ejemplo
-  createdAt: monthsAgoIso((i % 5) + 1, 5 + (i % 20)),
+  // i % 5 reparte entre el mes actual (0) y los 4 anteriores, de modo que el
+  // KPI "Pacientes nuevos" de "Este mes" tenga datos.
+  createdAt: monthsAgoIso(i % 5, 5 + (i % 20)),
 }));
 
 // ---------- Paquetes (12, uno por paciente) ----------
@@ -250,7 +262,9 @@ const packages: SessionPackage[] = patients.map((pt, i) => {
     totalSessions: total,
     usedSessions: used,
     price: service.defaultSessionPrice * total,
-    purchasedAt: monthsAgoIso((i % 4) + 1, 8 + (i % 15)),
+    // i % 4 reparte la compra entre el mes actual (0) y los 3 anteriores, para
+    // que el KPI de ingresos de "Este mes" no salga en cero.
+    purchasedAt: monthsAgoIso(i % 4, 8 + (i % 15)),
     status: remaining === 0 ? "completed" : "active",
   };
 });

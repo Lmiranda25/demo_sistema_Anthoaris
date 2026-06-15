@@ -82,41 +82,76 @@ export function PackagesPage() {
           description="Registra el primer paquete de sesiones."
         />
       ) : (
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Paciente</TableHead>
-                <TableHead>Servicio</TableHead>
-                <TableHead>Sesiones</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Precio</TableHead>
-                <TableHead className="text-right">Acción</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((pkg) => (
-                <TableRow key={pkg.id}>
-                  <TableCell className="font-medium">{patientName(pkg.patientId)}</TableCell>
-                  <TableCell className="text-muted-foreground">{serviceName(pkg.serviceId)}</TableCell>
-                  <TableCell>
-                    {pkg.usedSessions}/{pkg.totalSessions}
-                  </TableCell>
-                  <TableCell>
-                    <PackageAlertBadge pkg={pkg} />
-                  </TableCell>
-                  <TableCell className="text-right">{formatCurrency(pkg.price)}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" onClick={() => setRenewTarget(pkg)}>
-                      <RefreshCw className="h-3.5 w-3.5" />
-                      Renovar
-                    </Button>
-                  </TableCell>
+        <>
+          {/* Escritorio/tablet: tabla */}
+          <Card className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Paciente</TableHead>
+                  <TableHead>Servicio</TableHead>
+                  <TableHead>Sesiones</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead className="text-right">Precio</TableHead>
+                  <TableHead className="text-right">Acción</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+              </TableHeader>
+              <TableBody>
+                {rows.map((pkg) => (
+                  <TableRow key={pkg.id}>
+                    <TableCell className="font-medium">{patientName(pkg.patientId)}</TableCell>
+                    <TableCell className="text-muted-foreground">{serviceName(pkg.serviceId)}</TableCell>
+                    <TableCell>
+                      {pkg.usedSessions}/{pkg.totalSessions}
+                    </TableCell>
+                    <TableCell>
+                      <PackageAlertBadge pkg={pkg} />
+                    </TableCell>
+                    <TableCell className="text-right">{formatCurrency(pkg.price)}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="outline" size="sm" onClick={() => setRenewTarget(pkg)}>
+                        <RefreshCw className="h-3.5 w-3.5" />
+                        Renovar
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+
+          {/* Móvil: tarjetas */}
+          <div className="space-y-3 md:hidden">
+            {rows.map((pkg) => (
+              <Card key={pkg.id}>
+                <div className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="font-medium">{patientName(pkg.patientId)}</div>
+                      <div className="text-sm text-muted-foreground">{serviceName(pkg.serviceId)}</div>
+                    </div>
+                    <PackageAlertBadge pkg={pkg} />
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {pkg.usedSessions}/{pkg.totalSessions} sesiones
+                    </span>
+                    <span className="font-medium">{formatCurrency(pkg.price)}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => setRenewTarget(pkg)}
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    Renovar
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </>
       )}
 
       <PackageFormDialog open={createOpen} onOpenChange={setCreateOpen} />

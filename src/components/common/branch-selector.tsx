@@ -39,7 +39,7 @@ export function BranchSelector() {
 
   return (
     <Select value={branchScope} onValueChange={setBranchScope}>
-      <SelectTrigger className="w-[200px]">
+      <SelectTrigger className="w-[150px] sm:w-[200px]">
         <SelectValue placeholder="Sede" />
       </SelectTrigger>
       <SelectContent>
