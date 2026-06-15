@@ -1,0 +1,53 @@
+/*
+  Animaciones breves y funcionales (principios del SSD 7.1).
+  Mantener duraciones cortas y respetar prefers-reduced-motion (definido en index.css).
+*/
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in var(--transition-normal) ease-out both;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up var(--transition-normal) ease-out both;
+}
+
+/* Skeleton con brillo sutil para simular carga */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    color-mix(in oklch, var(--muted), white 30%) 50%,
+    var(--muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}

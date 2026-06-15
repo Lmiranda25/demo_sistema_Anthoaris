@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48">
+  <rect x="0" y="8" width="32" height="32" rx="8" fill="#0f766e" />
+  <path d="M16 16c-4 0-7 3-7 7 0 3.5 2.5 5.2 4.7 7L16 38l2.3-1.7c2.2-1.8 4.7-3.5 4.7-7 0-4-3-7-7-7z" fill="#fff" />
+  <circle cx="16" cy="23" r="2.6" fill="#0f766e" />
+  <text x="44" y="31" font-family="-apple-system, Segoe UI, Inter, sans-serif" font-size="20" font-weight="600" fill="#0f172a">Anthoaris</text>
+</svg>
