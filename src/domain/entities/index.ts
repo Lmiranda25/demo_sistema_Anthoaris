@@ -56,6 +56,8 @@ export interface Patient {
 export interface Specialty {
   id: string;
   name: string;
+  /** Color de marca asignado al servicio (guía de branding). */
+  color?: string;
 }
 
 /** Especialista que atiende pacientes (SSD 4.4). */

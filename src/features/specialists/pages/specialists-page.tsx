@@ -46,6 +46,7 @@ export function SpecialistsPage() {
   }, [specialists, scope, specialtyFilter]);
 
   const specialtyName = (id: string) => specialties?.find((s) => s.id === id)?.name ?? "—";
+  const specialtyColor = (id: string) => specialties?.find((s) => s.id === id)?.color ?? "#94a3b8";
   const branchNames = (ids: string[]) =>
     ids.map((id) => branches?.find((b) => b.id === id)?.name ?? "").filter(Boolean).join(", ");
 
@@ -112,7 +113,13 @@ export function SpecialistsPage() {
                     <CardTitle className="text-base">
                       {s.firstName} {s.lastName}
                     </CardTitle>
-                    <p className="mt-1 text-sm text-muted-foreground">{specialtyName(s.specialtyId)}</p>
+                    <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: specialtyColor(s.specialtyId) }}
+                      />
+                      {specialtyName(s.specialtyId)}
+                    </p>
                   </div>
                   <Badge tone={s.status === "active" ? "success" : "neutral"}>
                     {s.status === "active" ? "Activo" : "Inactivo"}

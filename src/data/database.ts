@@ -62,5 +62,7 @@ export const db = new AnthoarisDemoDB();
  * del seed: los visitantes que tengan una versión anterior se regeneran solos
  * al abrir la app (ver initDatabase). v2: fechas repartidas hasta el mes actual.
  * v3: sedes San Martín de Porres (SMP) y Comas, colores de marca.
+ * v4: especialidades reales (Atención, Lenguaje, Aprendizaje, Conducta,
+ *     Emocional, Guardería) con colores de marca y 6 especialistas.
  */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;

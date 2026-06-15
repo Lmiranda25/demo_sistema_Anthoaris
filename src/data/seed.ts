@@ -72,23 +72,27 @@ const branches: Branch[] = [
   },
 ];
 
-// ---------- Especialidades ----------
+// ---------- Especialidades (servicios reales de Anthoaris + colores de marca) ----------
 const specialties: Specialty[] = [
-  { id: "spec_lang", name: "Terapia de Lenguaje" },
-  { id: "spec_occ", name: "Terapia Ocupacional" },
-  { id: "spec_psy", name: "Psicología Infantil" },
-  { id: "spec_phys", name: "Terapia Física" },
+  { id: "spec_attn", name: "Terapia de Atención", color: "#378ADD" },
+  { id: "spec_lang", name: "Terapia de Lenguaje", color: "#1D9E75" },
+  { id: "spec_learn", name: "Terapia de Aprendizaje", color: "#EF9F27" },
+  { id: "spec_behav", name: "Terapia de Conducta", color: "#7F77DD" },
+  { id: "spec_emo", name: "Terapia Emocional", color: "#D85A30" },
+  { id: "spec_care", name: "Guardería", color: "#639922" },
 ];
 
-// ---------- Servicios ----------
+// ---------- Servicios (uno por especialidad) ----------
 const services: Service[] = [
+  { id: "srv_attn", name: "Sesión de Atención", defaultSessionPrice: 100 },
   { id: "srv_lang", name: "Sesión de Lenguaje", defaultSessionPrice: 90 },
-  { id: "srv_occ", name: "Sesión Ocupacional", defaultSessionPrice: 100 },
-  { id: "srv_psy", name: "Sesión Psicológica", defaultSessionPrice: 120 },
-  { id: "srv_phys", name: "Sesión Física", defaultSessionPrice: 85 },
+  { id: "srv_learn", name: "Sesión de Aprendizaje", defaultSessionPrice: 95 },
+  { id: "srv_behav", name: "Sesión de Conducta", defaultSessionPrice: 110 },
+  { id: "srv_emo", name: "Sesión Emocional", defaultSessionPrice: 120 },
+  { id: "srv_care", name: "Día de Guardería", defaultSessionPrice: 60 },
 ];
 
-// ---------- Especialistas ----------
+// ---------- Especialistas (uno por especialidad) ----------
 const specialists: Specialist[] = [
   {
     id: "sp_1",
@@ -104,7 +108,7 @@ const specialists: Specialist[] = [
     id: "sp_2",
     firstName: "Diego",
     lastName: "Ramírez",
-    specialtyId: "spec_occ",
+    specialtyId: "spec_attn",
     branchIds: ["branch_1", "branch_2"],
     schedule: "Lun a Sáb, 10:00 - 16:00",
     status: "active",
@@ -114,7 +118,7 @@ const specialists: Specialist[] = [
     id: "sp_3",
     firstName: "Valentina",
     lastName: "Castro",
-    specialtyId: "spec_psy",
+    specialtyId: "spec_emo",
     branchIds: ["branch_2"],
     schedule: "Mar a Vie, 11:00 - 17:00",
     status: "active",
@@ -124,11 +128,31 @@ const specialists: Specialist[] = [
     id: "sp_4",
     firstName: "Mateo",
     lastName: "Vargas",
-    specialtyId: "spec_phys",
+    specialtyId: "spec_learn",
     branchIds: ["branch_1", "branch_2"],
     schedule: "Lun a Vie, 08:00 - 13:00",
     status: "active",
     email: "mateo.vargas@anthoaris.demo",
+  },
+  {
+    id: "sp_5",
+    firstName: "Camila",
+    lastName: "Herrera",
+    specialtyId: "spec_behav",
+    branchIds: ["branch_1"],
+    schedule: "Lun a Vie, 09:00 - 15:00",
+    status: "active",
+    email: "camila.herrera@anthoaris.demo",
+  },
+  {
+    id: "sp_6",
+    firstName: "Andrés",
+    lastName: "Salas",
+    specialtyId: "spec_care",
+    branchIds: ["branch_2"],
+    schedule: "Lun a Vie, 08:00 - 17:00",
+    status: "active",
+    email: "andres.salas@anthoaris.demo",
   },
 ];
 
@@ -202,19 +226,26 @@ interface PatientSeed {
   reason: string;
 }
 
+// El branchId de cada paciente coincide con una sede del especialista asignado.
 const patientSeed: PatientSeed[] = [
+  // Lenguaje (sp_1, branch_1)
   { firstName: "Tomás", lastName: "Torres", years: 6, month: 3, day: 12, branchId: "branch_1", specialistId: "sp_1", reason: "Retraso en el lenguaje expresivo" },
   { firstName: "Isabela", lastName: "Mendoza", years: 5, month: 7, day: 4, branchId: "branch_1", specialistId: "sp_1", reason: "Dificultad de articulación" },
-  { firstName: "Joaquín", lastName: "Ríos", years: 8, month: 1, day: 22, branchId: "branch_1", specialistId: "sp_2", reason: "Integración sensorial" },
-  { firstName: "Camila", lastName: "Cárdenas", years: 7, month: 11, day: 9, branchId: "branch_1", specialistId: "sp_2", reason: "Motricidad fina" },
-  { firstName: "Benjamín", lastName: "Núñez", years: 4, month: 5, day: 30, branchId: "branch_1", specialistId: "sp_4", reason: "Fortalecimiento postural" },
-  { firstName: "Antonella", lastName: "Flores", years: 9, month: 9, day: 15, branchId: "branch_1", specialistId: "sp_4", reason: "Rehabilitación de marcha" },
+  // Atención (sp_2, branch_1 / branch_2)
+  { firstName: "Joaquín", lastName: "Ríos", years: 8, month: 1, day: 22, branchId: "branch_1", specialistId: "sp_2", reason: "Dificultad para mantener la concentración" },
+  { firstName: "Mathías", lastName: "Vega", years: 5, month: 12, day: 1, branchId: "branch_2", specialistId: "sp_2", reason: "Distracción frecuente en tareas" },
+  // Aprendizaje (sp_4, branch_1 / branch_2)
+  { firstName: "Camila", lastName: "Cárdenas", years: 7, month: 11, day: 9, branchId: "branch_1", specialistId: "sp_4", reason: "Dificultades en lectura y escritura" },
+  { firstName: "Valeria", lastName: "Rojas", years: 8, month: 4, day: 25, branchId: "branch_2", specialistId: "sp_4", reason: "Dificultad en cálculo matemático" },
+  // Conducta (sp_5, branch_1)
+  { firstName: "Benjamín", lastName: "Núñez", years: 4, month: 5, day: 30, branchId: "branch_1", specialistId: "sp_5", reason: "Conductas desafiantes en casa" },
+  { firstName: "Antonella", lastName: "Flores", years: 9, month: 9, day: 15, branchId: "branch_1", specialistId: "sp_5", reason: "Fortalecimiento de habilidades sociales" },
+  // Emocional (sp_3, branch_2)
   { firstName: "Santiago", lastName: "Paredes", years: 6, month: 2, day: 18, branchId: "branch_2", specialistId: "sp_3", reason: "Manejo de ansiedad" },
-  { firstName: "Emilia", lastName: "Aguilar", years: 7, month: 6, day: 7, branchId: "branch_2", specialistId: "sp_3", reason: "Habilidades sociales" },
-  { firstName: "Mathías", lastName: "Vega", years: 5, month: 12, day: 1, branchId: "branch_2", specialistId: "sp_2", reason: "Autonomía en rutinas" },
-  { firstName: "Valeria", lastName: "Rojas", years: 8, month: 4, day: 25, branchId: "branch_2", specialistId: "sp_2", reason: "Coordinación bilateral" },
-  { firstName: "Sebastián", lastName: "Soto", years: 6, month: 8, day: 14, branchId: "branch_2", specialistId: "sp_4", reason: "Equilibrio y tono muscular" },
   { firstName: "Renata", lastName: "Díaz", years: 4, month: 10, day: 3, branchId: "branch_2", specialistId: "sp_3", reason: "Regulación emocional" },
+  // Guardería (sp_6, branch_2)
+  { firstName: "Emilia", lastName: "Aguilar", years: 3, month: 6, day: 7, branchId: "branch_2", specialistId: "sp_6", reason: "Estimulación temprana y cuidado integral" },
+  { firstName: "Sebastián", lastName: "Soto", years: 2, month: 8, day: 14, branchId: "branch_2", specialistId: "sp_6", reason: "Guardería con estimulación temprana" },
 ];
 
 const patients: Patient[] = patientSeed.map((p, i) => ({
@@ -237,10 +268,12 @@ const patients: Patient[] = patientSeed.map((p, i) => ({
 function serviceForSpecialist(specialistId: string): Service {
   const spec = specialists.find((s) => s.id === specialistId)!;
   const map: Record<string, string> = {
+    spec_attn: "srv_attn",
     spec_lang: "srv_lang",
-    spec_occ: "srv_occ",
-    spec_psy: "srv_psy",
-    spec_phys: "srv_phys",
+    spec_learn: "srv_learn",
+    spec_behav: "srv_behav",
+    spec_emo: "srv_emo",
+    spec_care: "srv_care",
   };
   const serviceId = map[spec.specialtyId];
   return services.find((s) => s.id === serviceId)!;
