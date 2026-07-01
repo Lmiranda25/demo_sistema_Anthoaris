@@ -3,8 +3,10 @@
 **Documento:** Software/System Design Document  
 **Proyecto:** Sistema de Gestión Multi-Sede – Centro de Terapias Integrales Anthoaris  
 **Tipo de entrega:** Demo frontend desplegable manualmente en GitHub Pages  
-**Versión:** 1.0  
-**Estado:** Propuesta técnica inicial  
+**Versión:** 2.0  
+**Estado:** Implementada y desplegada  
+**Repositorio:** https://github.com/Lmiranda25/demo_sistema_Anthoaris  
+**Demo en vivo:** https://lmiranda25.github.io/demo_sistema_Anthoaris/  
 
 ---
 
@@ -13,6 +15,12 @@
 Este documento define la arquitectura, alcance, experiencia de usuario, estructura del repositorio y estrategia de despliegue para construir una demo navegable del Sistema de Gestión Multi-Sede Anthoaris.
 
 La demo permitirá presentar el funcionamiento esperado del sistema mediante información ficticia y persistencia local en el navegador. No será todavía un sistema clínico ni financiero listo para producción.
+
+> **Estado de implementación (v2.0):** la demo está construida, probada y
+> desplegada. Este documento se actualizó para reflejar las decisiones tomadas
+> durante la implementación (sedes reales, especialidades reales, identidad de
+> marca y filtro de fechas por calendario). Ver el registro de cambios en la
+> sección 23.
 
 ---
 
@@ -73,12 +81,13 @@ Permitir que el dueño del centro controle la operación de sus dos sedes, los i
 
 ### 4.1 Autenticación simulada
 
-La demo tendrá una pantalla de acceso con usuarios predefinidos:
+La demo tendrá una pantalla de acceso con usuarios predefinidos (nombres
+ficticios):
 
-- Dueño.
-- Recepcionista de Sede 1.
-- Recepcionista de Sede 2.
-- Especialista.
+- Dueño / Súper Administrador: **Carmen Salazar**.
+- Recepcionista Sede San Martín de Porres (SMP): **Rosa Medina**.
+- Recepcionista Sede Comas: **Pedro Quispe**.
+- Especialista: **Lucía Fernández** (Terapia de Lenguaje).
 
 No se usarán contraseñas reales. La selección de un perfil creará una sesión local ficticia.
 
@@ -100,9 +109,11 @@ Indicadores principales:
 Filtros:
 
 - Consolidado.
-- Sede 1.
-- Sede 2.
-- Periodo simulado.
+- Sede San Martín de Porres (SMP).
+- Sede Comas.
+- **Rango de fechas mediante calendario** (selector "Desde – Hasta") con atajos
+  rápidos: Hoy, Este mes, Mes anterior y Últimos 3 meses. Reemplaza al antiguo
+  dropdown de periodo fijo. Aplica también en Reportes.
 
 ### 4.3 Pacientes y apoderados
 
@@ -137,10 +148,20 @@ Funciones:
 
 ### 4.4 Especialistas
 
+Las especialidades corresponden a los servicios reales de Anthoaris, cada una
+con un color de marca asignado (guía de branding):
+
+- Terapia de Atención (azul `#378ADD`).
+- Terapia de Lenguaje (teal `#1D9E75`).
+- Terapia de Aprendizaje (ámbar `#EF9F27`).
+- Terapia de Conducta (lavanda `#7F77DD`).
+- Terapia Emocional (coral `#D85A30`).
+- Guardería (verde `#639922`).
+
 Información:
 
 - Nombre.
-- Especialidad.
+- Especialidad (con su color de marca).
 - Sede o sedes asignadas.
 - Horarios.
 - Estado.
@@ -287,6 +308,7 @@ PatientRepository
 | Gráficos | Recharts | Indicadores y gráficos React |
 | Tablas | TanStack Table | Listados, filtros, ordenamiento y paginación |
 | Fechas | date-fns | Fechas, edades y agenda |
+| Calendario | react-day-picker | Selector de rango de fechas para Dashboard y Reportes |
 | Iconos | Lucide React | Iconografía uniforme |
 | Notificaciones | Sonner | Toasts discretos |
 | Deploy | gh-pages | Publicación manual de `dist` en la rama `gh-pages` |
@@ -337,7 +359,9 @@ font-family:
 
 Esto permite usar San Francisco en equipos Apple sin incluir ni distribuir archivos de fuente.
 
-### 7.3 Tokens visuales sugeridos
+### 7.3 Tokens visuales
+
+Radios, espaciado y transiciones:
 
 ```css
 --radius-sm: 10px;
@@ -351,6 +375,26 @@ Esto permite usar San Francisco en equipos Apple sin incluir ni distribuir archi
 --transition-normal: 220ms;
 --transition-slow: 320ms;
 ```
+
+Paleta de color alineada a la **guía de marca oficial de Anthoaris** (implementada
+en `src/styles/tokens.css`):
+
+```css
+/* Primario y acento */
+--primary: #1D9E75;      /* Teal de marca: botones, nav activo, KPIs */
+--destructive: #D85A30;  /* Coral: CTA, urgencia, acciones destructivas */
+--warning: #EF9F27;      /* Ámbar: advertencias */
+
+/* Neutros de marca */
+--foreground: #2C2C2A;   /* Títulos */
+--muted-foreground: #888780;
+--secondary: #F1EFE8;    /* Fondos alternos */
+--border: #E7E3D8;
+```
+
+Colores por especialidad (usados en badges/puntos de color): Atención `#378ADD`,
+Lenguaje `#1D9E75`, Aprendizaje `#EF9F27`, Conducta `#7F77DD`, Emocional
+`#D85A30`, Guardería `#639922`.
 
 ### 7.4 Composición principal
 
@@ -408,7 +452,7 @@ Esto permite usar San Francisco en equipos Apple sin incluir ni distribuir archi
 Con `HashRouter`, las direcciones publicadas tendrán una forma similar a:
 
 ```text
-https://usuario.github.io/anthoaris-demo/#/app/dashboard
+https://lmiranda25.github.io/demo_sistema_Anthoaris/#/app/dashboard
 ```
 
 ---
@@ -547,7 +591,7 @@ Estados visuales:
 ## 11. Jerarquía de carpetas recomendada
 
 ```text
-anthoaris-demo/
+demo_sistema_Anthoaris/
 ├── .gitignore
 ├── README.md
 ├── package.json
@@ -684,28 +728,38 @@ No se recomienda crear carpetas globales gigantes como `pages`, `services` o `co
 
 ## 12. Datos iniciales de la demo
 
-El archivo `seed.ts` creará:
+El archivo `seed.ts` crea (datos ficticios y deterministas):
 
-- 2 sedes.
-- 1 dueño.
-- 2 recepcionistas.
-- 4 especialistas.
-- 12 pacientes.
-- 12 apoderados.
-- 30 citas.
-- 10 evoluciones.
-- 12 paquetes.
-- Ingresos ficticios de los últimos meses.
+- 2 sedes: **San Martín de Porres (SMP)** y **Comas**.
+- 1 dueño, 2 recepcionistas y 1 usuario especialista para el login.
+- 6 especialidades / servicios reales (una por especialista).
+- 6 especialistas.
+- 12 pacientes y 12 apoderados.
+- 30 citas (pasadas, de hoy y futuras).
+- 10 evoluciones clínicas (una por cita atendida).
+- 12 paquetes de sesiones.
+- Ingresos ficticios repartidos **hasta el mes actual** (para que los KPIs de
+  "Este mes" tengan datos reales).
 
-Al abrir la aplicación por primera vez:
+Las fechas del seed se calculan relativas a "ahora", de modo que el dashboard y
+la agenda siempre muestren información reciente.
+
+Al abrir la aplicación:
 
 ```text
 ¿Existe la base local?
-├── Sí → usar datos existentes
-└── No → cargar datos semilla
+├── No                       → cargar datos semilla
+├── Sí, versión de semilla
+│   anterior a la actual     → regenerar automáticamente (migración suave)
+└── Sí, versión actual       → usar datos existentes
 ```
 
-Debe existir un botón:
+La regeneración automática se controla con `SCHEMA_VERSION` (en
+`src/data/database.ts`): cuando se cambia la forma o distribución del seed se
+sube la versión, y los visitantes con datos previos se regeneran solos al abrir
+la app, sin tener que reiniciar manualmente.
+
+Además existe el botón:
 
 ```text
 Configuración → Reiniciar demo
@@ -733,43 +787,57 @@ Este botón elimina la base local y vuelve a cargar los datos semilla.
 
 ### 14.1 Nombre del repositorio
 
-Ejemplo:
+Repositorio real de la demo:
 
 ```text
-anthoaris-demo
+demo_sistema_Anthoaris
 ```
 
-La URL será:
+La URL publicada es:
 
 ```text
-https://TU_USUARIO.github.io/anthoaris-demo/
+https://lmiranda25.github.io/demo_sistema_Anthoaris/
 ```
+
+> **Importante:** GitHub Pages distingue mayúsculas en la URL. El nombre incluye
+> `Anthoaris` con A mayúscula, por lo que `base` debe respetar esas mayúsculas.
 
 ### 14.2 Configuración de Vite
 
+La configuración real incluye el alias `@`, el plugin de Tailwind v4 y el
+troceado manual de chunks para mejorar la caché en GitHub Pages:
+
 ```ts
-// vite.config.ts
+// vite.config.ts (resumen)
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import path from "node:path";
 
 export default defineConfig({
+  base: "/demo_sistema_Anthoaris/", // debe coincidir EXACTO con el repo (mayúsculas)
   plugins: [react(), tailwindcss()],
-  base: "/anthoaris-demo/",
+  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
   build: {
     outDir: "dist",
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          charts: ["recharts"],
+          db: ["dexie", "dexie-react-hooks"],
+          forms: ["react-hook-form", "zod", "@hookform/resolvers"],
+          calendar: ["react-day-picker"],
+        },
+      },
+    },
   },
 });
 ```
 
-El valor de `base` debe coincidir exactamente con el nombre del repositorio.
-
-Para un repositorio llamado `sistema-anthoaris`, usar:
-
-```ts
-base: "/sistema-anthoaris/"
-```
+El valor de `base` debe coincidir exactamente con el nombre del repositorio,
+incluyendo mayúsculas.
 
 ### 14.3 Router
 
@@ -792,8 +860,8 @@ Se utiliza `HashRouter` para que una recarga de página no solicite al servidor 
 ## 15. Instalación inicial
 
 ```bash
-npm create vite@latest anthoaris-demo -- --template react-ts
-cd anthoaris-demo
+npm create vite@latest demo_sistema_Anthoaris -- --template react-ts
+cd demo_sistema_Anthoaris
 
 npm install
 npm install react-router-dom motion zustand
@@ -801,6 +869,7 @@ npm install dexie dexie-react-hooks
 npm install react-hook-form zod @hookform/resolvers
 npm install recharts @tanstack/react-table
 npm install date-fns lucide-react sonner
+npm install react-day-picker @radix-ui/react-popover
 npm install clsx tailwind-merge
 
 npm install tailwindcss @tailwindcss/vite
@@ -846,7 +915,7 @@ git add .
 git commit -m "feat: initial Anthoaris demo"
 git branch -M main
 
-git remote add origin https://github.com/TU_USUARIO/anthoaris-demo.git
+git remote add origin https://github.com/Lmiranda25/demo_sistema_Anthoaris.git
 git push -u origin main
 
 npm run deploy
@@ -891,15 +960,16 @@ El despliegue se inicia manualmente desde la computadora del desarrollador.
 
 ### Escena 1 — Dueño
 
-1. Seleccionar perfil “Súper Administrador”.
+1. Seleccionar perfil “Súper Administrador” (Carmen Salazar).
 2. Mostrar dashboard consolidado.
-3. Cambiar de Consolidado a Sede 1.
-4. Mostrar ingresos, nuevos pacientes y ausentismo.
-5. Abrir rendimiento de especialistas.
+3. Cambiar de Consolidado a Sede San Martín de Porres (SMP).
+4. Ajustar el rango de fechas con el calendario (o un atajo como "Este mes").
+5. Mostrar ingresos, nuevos pacientes y ausentismo.
+6. Abrir rendimiento de especialistas.
 
 ### Escena 2 — Recepción
 
-1. Cambiar al perfil “Recepcionista Sede 1”.
+1. Cambiar al perfil “Recepcionista SMP” (Rosa Medina).
 2. Registrar un paciente.
 3. Crear una cita.
 4. Registrar un paquete.
@@ -1131,3 +1201,39 @@ Despliegue manual con gh-pages
 ```
 
 Esta combinación permite construir una experiencia visual pulida, persistente en el navegador y desplegable sin servidor. Al mismo tiempo, mantiene una arquitectura preparada para sustituir la base local por una API real en una siguiente fase.
+
+---
+
+## 23. Registro de cambios
+
+### v2.0 — Implementación y ajustes de negocio
+
+Cambios respecto a la propuesta inicial (v1.0), aplicados durante la
+implementación y a pedido del cliente:
+
+- **Sedes reales:** San Martín de Porres (SMP) y Comas (antes Miraflores y La
+  Molina).
+- **Especialidades reales:** Atención, Lenguaje, Aprendizaje, Conducta,
+  Emocional y Guardería, cada una con su color de marca. Se pasó de 4 a 6
+  especialistas (uno por especialidad).
+- **Identidad de marca:** se incorporó el logo oficial de Anthoaris (login,
+  barra lateral, favicon y manifest) y se alineó la paleta de color a la guía de
+  branding (teal `#1D9E75` primario, coral `#D85A30` acento, ámbar `#EF9F27`
+  advertencia, neutros de marca).
+- **Filtro de fechas por calendario:** el dropdown de periodo fijo se reemplazó
+  por un selector de rango "Desde – Hasta" con calendario (react-day-picker) y
+  atajos rápidos (Hoy, Este mes, Mes anterior, Últimos 3 meses), en Dashboard y
+  Reportes.
+- **Datos del dashboard:** el seed reparte pagos y pacientes hasta el mes actual
+  para que los KPIs de "Este mes" no aparezcan en cero.
+- **Migración por versión de semilla:** `SCHEMA_VERSION` regenera
+  automáticamente los datos de visitantes con una versión anterior.
+- **Responsive móvil:** las tablas de pacientes y paquetes se muestran como
+  tarjetas en móvil; filtros y selectores a ancho completo; diálogos con margen.
+- **Despliegue:** repositorio `demo_sistema_Anthoaris`, publicado en
+  `https://lmiranda25.github.io/demo_sistema_Anthoaris/`.
+
+### v1.0 — Propuesta técnica inicial
+
+Documento de diseño original: arquitectura, alcance funcional, stack, modelo de
+datos, reglas de negocio y estrategia de despliegue en GitHub Pages.
